@@ -11,7 +11,7 @@ zhipuai==2.0.1
 tiktoken>=0.3.3
 requests[socks]
 pydantic==2.5.2
-protobuf==3.18
+protobuf==3.18.3
 transformers>=4.27.1
 scipdf_parser>=0.52
 anthropic>=0.18.1
