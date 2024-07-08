@@ -1,23 +1,6 @@
 import asyncio
 import datetime
 
-import apis
-
-
-class Account:
-    def __init__(self, account: str = '', password: str = ''):
-        self.account: str = account
-        self.password: str = password
-
-    def login(self):
-        if not self.account or not self.password:
-            return
-
-        if asyncio.run(apis.check_login()):
-            return
-        asyncio.run(apis.login(self.account, self.password))
-        pass
-
 
 class ProblemSet:
     def __init__(self, data: dict):

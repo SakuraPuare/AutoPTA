@@ -60,7 +60,7 @@ async def get(url: str, *args, **kwargs) -> Response:
                                          cookies=Session.cookies,
                                          follow_redirects=True,
                                          timeout=3) as client:
-                time.sleep(0.25)
+                time.sleep(0.2)
                 resp = await client.get(url, *args, **kwargs)
                 if resp.text == '{"error":{"code":"RATE_LIMIT_EXCEEDED","message":"您访问得太快啦，不如休息一会儿吧"}}':
                     tqdm.write('您访问得太快啦，不如休息一会儿吧')
@@ -81,7 +81,7 @@ async def post(url: str, *args, **kwargs) -> Response:
                                          cookies=Session.cookies,
                                          follow_redirects=True,
                                          timeout=3) as client:
-                time.sleep(0.25)
+                time.sleep(0.5)
                 resp = await client.post(url, *args, **kwargs)
                 if resp.text == '{"error":{"code":"RATE_LIMIT_EXCEEDED","message":"您访问得太快啦，不如休息一会儿吧"}}':
                     tqdm.write('您访问得太快啦，不如休息一会儿吧')

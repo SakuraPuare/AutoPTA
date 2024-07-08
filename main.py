@@ -57,8 +57,7 @@ async def main():
     #     await task
 
 if __name__ == '__main__':
-    account = Account(ACCOUNT, PASSWORD)
-    account.login()
+    asyncio.run(apis.login(ACCOUNT, PASSWORD))
 
     asyncio.run(main())
     pass

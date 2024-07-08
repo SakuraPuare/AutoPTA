@@ -9,6 +9,12 @@ from utils import is_cn_phone, is_email
 
 
 async def login(username: str, password: str):
+    if not username or not password:
+        return
+
+    if await check_login():
+        return
+
     url = 'https://passport.pintia.cn/api/users/sessions'
     data = {
         "password": password,
@@ -17,7 +23,7 @@ async def login(username: str, password: str):
     if is_email(username):
         data['email'] = username
     elif is_cn_phone(username):
-        data['phone'] = username
+        data['phone'] = '+86' + username
     resp = await http_.post(url, json=data)
     if resp.text and resp.text == '{"error":{"code":"GATEWAY_WRONG_CAPTCHA","message":"验证码错误"}}':
         tqdm.write('验证码错误')
@@ -99,8 +105,28 @@ async def get_all_problems(problem_set_id: str, exam_id: str):
     problems = [Problem.from_data(data) for data in problem_list]
     [problem.update_status(status)
      for problem, status in zip(problems, problem_status)]
+    return problems
+
+
+async def get_not_passed_problems(problem_set_id: str, exam_id: str):
+    problem_list = await get_exam_problem_list(problem_set_id, exam_id)
+    problem_status = await get_exam_problem_status(problem_set_id)
+    problems = [Problem.from_data(data) for data in problem_list]
+    [problem.update_status(status)
+     for problem, status in zip(problems, problem_status)]
+    problems = [
+        problem for problem in problems if problem.problem_submission_status != 'PROBLEM_ACCEPTED']
+    return problems
+
+
+async def get_all_problems_with_status(problem_set_id: str, exam_id: str):
+    problem_list = await get_exam_problem_list(problem_set_id, exam_id)
+    problem_status = await get_exam_problem_status(problem_set_id)
+    problems = [Problem.from_data(data) for data in problem_list]
+    [problem.update_status(status)
+     for problem, status in zip(problems, problem_status)]
     tasks = [
-        get_exam_problem_detail(problem_set_id, problem.id)
+        await get_exam_problem_detail(problem_set_id, problem.id)
         for problem in problems
     ]
     problems_detail = []
@@ -114,16 +140,16 @@ async def get_all_problems(problem_set_id: str, exam_id: str):
     return problems
 
 
-async def get_not_passed_problems(problem_set_id: str, exam_id: str):
+async def get_not_passed_problems_with_status(problem_set_id: str, exam_id: str):
     problem_list = await get_exam_problem_list(problem_set_id, exam_id)
     problem_status = await get_exam_problem_status(problem_set_id)
     problems = [Problem.from_data(data) for data in problem_list]
     [problem.update_status(status)
      for problem, status in zip(problems, problem_status)]
     problems = [
-        problem for problem in problems if problem.problem_submission_status != 'PROBLEM_ACCEPTED'][:50]
+        problem for problem in problems if problem.problem_submission_status != 'PROBLEM_ACCEPTED']
     tasks = [
-        get_exam_problem_detail(problem_set_id, problem.id)
+        (problem_set_id, problem.id)
         for problem in problems
     ]
     problems_detail = []
@@ -154,3 +180,10 @@ async def post_submission(exam_id: str, problem_id: str, code: str, lang: str):
     }
     resp = await http_.post(url, json=data)
     return resp
+
+
+async def get_problem_last_submission(problem_set_id: str, problem_id: str):
+    url = f'https://pintia.cn/api/problem-sets/{
+        problem_set_id}/last-submissions?problem_set_problem_id={problem_id}'
+    resp = await http_.get(url)
+    return resp.json().get('submission', {}).get('submissionDetails', [{}])[-1]
