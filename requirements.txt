@@ -3,18 +3,18 @@ tqdm
 
 
 ### from https://github.com/binary-husky/gpt_academic
-https://public.agent-matrix.com/publish/gradio-3.32.10-py3-none-any.whl
-fastapi==0.110
-gradio-client==0.8
-pypdf2==2.12.1
-zhipuai==2.0.1
-tiktoken>=0.3.3
+gradio>=5.0.0
+fastapi>=0.136.0
+gradio-client>=2.5.0
+pypdf2>=3.0.1
+zhipuai>=2.1.5
+tiktoken>=0.8.0
 requests[socks]
-pydantic==2.5.2
-protobuf==4.25.8
-transformers>=4.27.1
+pydantic>=2.11.0
+protobuf>=5.29.0
+transformers>=4.52.0
 scipdf_parser>=0.52
-anthropic>=0.18.1
+anthropic>=0.52.0
 python-markdown-math
 pymdown-extensions
 websocket-client
@@ -23,14 +23,14 @@ prompt_toolkit
 latex2mathml
 python-docx
 mdtex2html
-dashscope
-pyautogen
+dashscope>=1.25.18
+pyautogen>=0.10.0
 colorama
 Markdown
 pygments
 edge-tts
 pymupdf
-openai
+openai>=2.36.0
 rjsmin
 arxiv
 numpy
